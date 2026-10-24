@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://leonwater1.github.io/sitemap.xml

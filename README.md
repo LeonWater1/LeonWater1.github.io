@@ -1,21 +1,11 @@
 # 梁若水 Liang Jo-shui
 
-个人大模型学习主页，发布于 https://leonwater1.github.io/ 。
+个人主页：https://leonwater1.github.io/ 。
 
-纯静态 HTML / CSS / JavaScript，不需要安装依赖或构建。沿用仓库现有 GitHub Pages 发布设置。
+沿用 Axi’s Blog / Astro-Axi 的公开静态布局和样式，展示个人身份、关注方向与联系方式。保留 Blog 分类、Academic、Links、About、搜索、中英文页面、主题切换和 RSS。博客当前尚未发布文章。
 
-## 更新
+此仓库存放生成后的静态站点，无需服务端或构建步骤，使用 GitHub Pages 从仓库根目录发布。包含 `.nojekyll`，以便正常提供 `_astro/` 中的样式。
 
-- `index.html`：简介、联系方式与实践记录。
-- `data.js`：`topics` 为学习地图，`notes` 为手记。每篇手记需要唯一 `slug`；正文使用可信的作者 HTML。
-- `app.js`：搜索、分类、阅读弹窗、主题和移动目录。
-- `style.css`：配色与响应式布局。
-- `assets/`：两张使用内置 imagegen 制作并压缩为 WebP 的概念配图。
+`app.js` 维护主题、导航、语言和搜索交互；`search-index-zh.json` 与 `search-index-en.json` 提供站内搜索。文章与页面更新时需要同步生成分类、搜索索引和 RSS。
 
-当前三篇文章均标记为示例。换成真实内容时，请同步调整 `index.html` 和 `app.js` 中的示例提示。
-
-本地预览：`python -m http.server 4173`，然后打开 http://localhost:4173 。
-
-语法检查：`node --check app.js` 和 `node --check data.js`。
-
-文章链接使用 `#note/slug`，无需服务器路由。保留了旧页面的 `#zh` 和 `#en` 简介锚点。
+设计来源、修改说明与许可见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。本仓库不包含原作者的文章、履历、评论服务、追踪代码或字体文件。GitHub 贡献图使用 LeonWater1 的公开数据快照，日期在页面注明。

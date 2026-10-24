@@ -1,0 +1,17 @@
+/* Accessibility and content-fit additions only. Original Astro-Axi theme is in _astro/. */
+html{scroll-padding-top:6rem}
+body{min-height:100vh}
+main{min-height:40vh}
+.skip-link{position:fixed;left:1rem;top:-5rem;z-index:100;padding:.6rem 1rem;border-radius:.5rem;background:hsl(var(--background));border:1px solid hsl(var(--border))}
+.skip-link:focus{top:1rem}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid hsl(var(--primary));outline-offset:4px}
+.profile-avatar{aspect-ratio:1;object-fit:cover;flex-shrink:0}
+.avatar-fallback{width:144px;height:144px;display:grid;place-items:center;font-size:4rem;background:hsl(var(--muted));color:hsl(var(--muted-foreground))}
+.empty-notice{padding-block:2rem}
+.search-input{display:block;width:100%;padding:.85rem 1rem;border:1px solid hsl(var(--border));border-radius:.75rem;background:hsl(var(--background));color:hsl(var(--foreground));font:inherit}
+.search-input::placeholder{color:hsl(var(--muted-foreground))}
+.search-result{margin-top:1rem}
+header-component a[aria-current=page]{color:hsl(var(--primary))}
+toc-heading li{border-radius:.5rem}
+@media(max-width:480px){#content-header>.flex.flex-row{gap:1rem}.profile-avatar{width:112px;height:112px}.avatar-fallback{font-size:3rem}#content-header h1{overflow-wrap:anywhere}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.animate{opacity:1!important;animation:none!important}*,*:before,*:after{transition:none!important}}
