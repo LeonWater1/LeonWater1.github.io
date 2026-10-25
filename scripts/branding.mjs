@@ -6,7 +6,7 @@ export const brandSvg = readFileSync(new URL('../src/assets/brand/star-orbit.svg
 // Cache keys cover the rendering recipe too, so PNG/ICO changes get new URLs
 // even when vector geometry is unchanged. Saved browser history may lag behind.
 export const rasterColor = '#70839d'
-export const iconRecipe = { version: 3, density: 300, rasterColor, transparent: true, sizes: [16, 32, 48, 96, 120, 152, 167, 180, 192, 512] }
+export const iconRecipe = { version: 4, density: 300, rasterColor, transparent: true, sizes: [16, 32, 48, 96, 120, 152, 167, 180, 192, 512] }
 export const getBrandVersion = (svg, recipe) => createHash('sha256').update(svg).update(JSON.stringify(recipe)).digest('hex').slice(0, 12)
 export const brandVersion = getBrandVersion(brandSvg, iconRecipe)
 export const iconPrefix = `/favicon/${brandVersion}`
@@ -29,5 +29,5 @@ export const iconMarkup = iconLinks
   .join('')
 
 /** Raster assets cannot follow media queries; this medium slate remains visible on both themes. */
-export const rasterSvg = brandSvg.replace(/<style>[\s\S]*?<\/style>/, `<style>.background{fill:#edf3ff}.letter{fill:#3768bd}</style>`)
-export const maskSvg = brandSvg.replace(/<rect[^>]*\/>/, '').replace(/<style>[\s\S]*?<\/style>/, '<style>.letter{fill:#000}</style>')
+export const rasterSvg = brandSvg
+export const maskSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="18" style="fill:#000"/></svg>'

@@ -14,4 +14,4 @@
 
 ## Liang Jo-shui fork
 
-本分支于 2026-10-25 复用 Cyril-Fan/Cyril-Fan.github.io 的源码（参考提交 f738b6ee9aff108c338d8a49a2d1ae6d8b675b40），保留上述上游作者与许可信息。替换为梁若水本人确认的双语资料，保留空博客，恢复原站居中主页与“若”字图标；使用独立 Supabase 项目与 GitHub Pages 配置。未复制好友的个人照片或文章。贡献图改由本站工作流直接获取 LeonWater1 的真实数据，动画使用 Platane/snk（MIT）。
+本分支于 2026-10-25 复用 Cyril-Fan/Cyril-Fan.github.io 的源码（参考提交 f738b6ee9aff108c338d8a49a2d1ae6d8b675b40），保留上述上游作者与许可信息。替换为梁若水本人确认的双语资料，保留空博客，恢复原站居中主页，使用站主指定的 Aurelius 宠物图标；使用独立 Supabase 项目与 GitHub Pages 配置。未复制好友的个人照片或文章。贡献图改由本站工作流直接获取 LeonWater1 的真实数据，动画使用 Platane/snk（MIT）。

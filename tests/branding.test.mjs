@@ -5,9 +5,9 @@ import { readFile } from 'node:fs/promises'
 import { brandSvg, iconMarkup, iconPrefix, iconRecipe, getBrandVersion, rasterSvg, maskSvg } from '../scripts/branding.mjs'
 import { verifyDocument } from '../scripts/verify-site-output.mjs'
 
-test('browser and mobile raster icons have transparent exteriors and visible star shapes', async () => {
-  assert.match(brandSvg, /<rect\b/)
-  assert.match(brandSvg, /prefers-color-scheme:\s*dark/)
+test('browser and mobile cover icons have transparent corners and visible artwork', async () => {
+  assert.match(brandSvg, /<image\b/)
+  assert.match(brandSvg, /data:image\/png;base64,/)
   for (const size of [16, 32, 48, 180, 512]) {
     const { data, info } = await sharp(Buffer.from(rasterSvg)).resize(size, size).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
     assert.equal(info.channels, 4)
@@ -22,9 +22,9 @@ test('raster recipe changes invalidate every versioned browser icon', () => {
   const current = getBrandVersion(brandSvg, iconRecipe)
   assert.notEqual(getBrandVersion(brandSvg, { ...iconRecipe, rasterColor: '#000000' }), current)
   assert.notEqual(getBrandVersion(brandSvg, { ...iconRecipe, density: 144 }), current)
-  assert.notEqual(getBrandVersion(brandSvg.replace('rx="18"', 'rx="19"'), iconRecipe), current)
+  assert.notEqual(getBrandVersion(brandSvg.replace('Aurelius', 'Aurelius icon'), iconRecipe), current)
   assert.match(maskSvg, /fill:#000/)
-  assert.doesNotMatch(maskSvg, /<rect\b|prefers-color-scheme/)
+  assert.doesNotMatch(maskSvg, /<image\b|prefers-color-scheme/)
 })
 
 test('published PNGs and every ICO frame contain the entire current transparent artwork', async () => {

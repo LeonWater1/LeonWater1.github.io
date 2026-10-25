@@ -18,7 +18,7 @@ const p = profile[en ? 'en' : 'zh']
   <main class='home-layout'>
     <section class='home-profile animate' id='content-header'>
       <div class='profile-heading'>
-        {profile.avatar ? <img src={contentImage(profile.avatar)} alt={p.name} class='profile-avatar shrink-0 rounded-lg border p-1' width='176' height='176' loading='eager' /> : <Image
+        {profile.avatar ? <img src={contentImage(profile.avatar)} alt={en ? "Aurelius, my fox companion" : "我的小狐狸伙伴 Aurelius"} class='profile-avatar shrink-0 rounded-lg border p-1' width='176' height='176' loading='eager' /> : <Image
           src={avatar}
           alt={en ? 'Liang Jo-shui’s avatar' : '梁若水的头像'}
           class='profile-avatar shrink-0 rounded-lg border p-1'
