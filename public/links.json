@@ -10,6 +10,13 @@
           "link": "https://cyril-fan.top/",
           "avatar": "https://cyril-fan.top/avatar/avatar.png",
           "feed": "https://cyril-fan.top/rss.xml"
+        },
+        {
+          "name": "VYS3N",
+          "intro": "VYS3N 的个人主页、文章与项目。",
+          "link": "https://VYS3N.github.io/",
+          "avatar": "https://VYS3N.github.io/images/avatar.webp",
+          "feed": "https://VYS3N.github.io/rss.xml"
         }
       ]
     }
