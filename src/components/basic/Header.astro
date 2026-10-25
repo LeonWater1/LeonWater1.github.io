@@ -6,7 +6,7 @@ import { Icon } from '@/components/user'
 import LanguageSwitch from '@/components/user/LanguageSwitch.astro'
 import { getRelativeLocaleUrl } from 'astro:i18n'
 const english = Astro.currentLocale === 'en'
-const brandTitle = english ? 'Liang Jo-shui' : '梁若水'
+const brandTitle = 'Liang Jo-shui'
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/'
 const menuTitles: Record<string, string> = {
   '/blog/all': english ? 'Blog' : '博客',
