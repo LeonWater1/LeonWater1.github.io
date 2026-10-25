@@ -1,3 +1,6 @@
 Aurelius — the site owner’s custom ChatGPT pet.
 Pet ID: pet_6ad6f94ed13081919db8de0a105d3702
 Avatar renders the existing idle sprite; no changes to the pet record or active selection.
+
+Tonight cover artwork: https://music.apple.com/us/album/tonight-single/1803593737
+Cover artwork belongs to its respective rights holders and is excluded from the code license.
