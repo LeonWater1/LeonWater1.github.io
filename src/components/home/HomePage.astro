@@ -26,7 +26,6 @@ const p = profile[en ? 'en' : 'zh']
         />}
         <div class='profile-details flex min-w-0 flex-col gap-y-4'>
           <h1 class='text-3xl font-bold'>{p.homeName}</h1>
-          {!en && <p class='text-muted-foreground'>Liang Jo-shui</p>}
           <div class='flex flex-wrap gap-x-1 gap-y-1'>
             {p.location && (
               <Label title={p.location}>
