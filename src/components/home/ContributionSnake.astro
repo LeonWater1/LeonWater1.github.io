@@ -1,0 +1,100 @@
+---
+import assets from '../../assets/contributions.json'
+import snapshot from '../../assets/contribution-calendar.json'
+import { normalizeContributions, contributionWeeks, contributionGeometry, contributionPalettes } from '../../lib/github-contributions'
+const en = Astro.currentLocale === 'en'
+const data = normalizeContributions(snapshot)
+if (!data) throw new Error('Contribution calendar is invalid; run the data sync before building.')
+if (assets.dataHash !== snapshot.dataHash || assets.dataThrough !== snapshot.dataThrough || assets.fetchedAt !== snapshot.fetchedAt) throw new Error('Contribution assets must share one verified snapshot.')
+const days = data.contributions
+const weeks = contributionWeeks(days)
+const first = days[0].date
+const last = days[days.length - 1].date
+const description = en ? `${data.total} contributions · ${first} – ${last}` : `${data.total} 次贡献 · ${first} – ${last}`
+const dayLabel = (day: typeof days[number]) => en ? `${day.date}: ${day.count} contributions` : `${day.date}：${day.count} 次贡献`
+const monthLabels = weeks.flatMap((week, column) => {
+  const day = week.find(day => day !== null)
+  if (!day || (column > 0 && day.date.slice(5, 7) === weeks[column-1].find(day => day !== null)?.date.slice(5, 7))) return []
+  return [{ column, label: en ? new Date(`${day.date}T00:00:00Z`).toLocaleDateString('en', { month:'short', timeZone:'UTC' }) : `${Number(day.date.slice(5,7))}月` }]
+})
+const { pitch, size, inset, height } = contributionGeometry
+const canvasWidth = (weeks.length + 2) * pitch
+const paletteStyle = Object.entries(contributionPalettes).flatMap(([theme, palette]) => [
+  `--contribution-${theme}-border:${palette.border}`,
+  ...palette.colors.map((color, level) => `--contribution-${theme}-${level}:${color}`)
+]).join(';')
+const updated = new Intl.DateTimeFormat(en ? 'en-GB' : 'zh-CN', {
+  year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit',
+  hourCycle: 'h23', timeZone: 'Asia/Shanghai'
+}).format(new Date(snapshot.fetchedAt))
+---
+
+<section class='min-w-0 w-full' aria-labelledby='contribution-heading' style={paletteStyle}>
+  <div class='mb-3 flex flex-wrap items-baseline justify-between gap-2'>
+    <h2 id='contribution-heading' class='text-base font-medium'>{en ? 'GitHub contributions' : 'GitHub 贡献记录'}</h2>
+    <a href={assets.source} target='_blank' rel='noopener noreferrer' class='text-xs text-muted-foreground underline-offset-4 hover:underline'>GitHub ↗</a>
+  </div>
+  <contribution-snake data-lang={en ? 'en' : 'zh'} data-source-commit={assets.sourceCommit} data-data-hash={assets.dataHash} data-updated={assets.fetchedAt} class='block min-w-0'>
+    <div id='contribution-animation' class='snake-frame'>
+      <div class='contribution-canvas' style={`aspect-ratio:${canvasWidth}/${height}`}>
+        <div class='snake-animated' aria-hidden='true'>
+          <img class='snake-light' src={assets.light} width={canvasWidth} height={height} loading='eager' decoding='async' alt={en ? 'A snake eating Liang Jo-shui’s GitHub contribution squares' : '小蛇吃掉 Liang Jo-shui 的 GitHub 贡献方块'} />
+          <img class='snake-dark' src={assets.dark} width={canvasWidth} height={height} loading='eager' decoding='async' alt={en ? 'A snake eating Liang Jo-shui’s GitHub contribution squares' : '小蛇吃掉 Liang Jo-shui 的 GitHub 贡献方块'} />
+        </div>
+        <div class='contribution-calendar'>
+          <svg viewBox={`-16 -32 ${canvasWidth} ${height}`} width={canvasWidth} height={height} role='group' aria-label={description}>
+            {monthLabels.map(({column, label}) => <text class='month-label' x={column * pitch + inset} y='-12'>{label}</text>)}
+            {weeks.map((week, column) => week.map((day, row) => day && (
+              <rect class={`contribution-day level-${day.level}`} x={column * pitch + inset} y={row * pitch + inset} width={size} height={size} rx='2'
+                role='button' tabindex={day.date === last ? '0' : '-1'} data-date={day.date} data-count={day.count} data-level={day.level}
+                aria-label={dayLabel(day)}><title>{dayLabel(day)}</title></rect>
+            )))}
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class='snake-caption text-xs text-muted-foreground'>
+      <span data-contribution-total title={`${first} – ${last} · ${en ? 'Updated' : '更新于'} ${updated} UTC+8`}>{en ? `${data.total} contributions` : `${data.total} 次贡献`}</span>
+      <button type='button' data-snake-toggle aria-controls='contribution-animation' aria-pressed='false' hidden>{en ? 'Turn on animation' : '开启动画'}</button>
+    </div>
+    <p data-contribution-stale class='text-xs text-muted-foreground' hidden={Date.now() - Date.parse(snapshot.fetchedAt) <= 36 * 60 * 60 * 1000}>{en ? 'Updates are temporarily delayed. The last verified contribution history is shown; hover over the total for its date.' : '更新暂有延迟，当前展示上次核实的贡献记录；悬停贡献总数可查看数据时间。'}</p>
+    <div class='calendar-inspector text-xs text-muted-foreground'>
+      <label>{en ? 'Date' : '日期'} <input type='date' data-contribution-date min={first} max={last} value={last} /></label>
+      <output data-contribution-detail aria-live='polite' aria-atomic='true'>{dayLabel(days[days.length - 1])}</output>
+    </div>
+  </contribution-snake>
+</section>
+
+<style is:global>
+  .snake-frame { width:100%; min-width:0; overflow:hidden; border:1px solid hsl(var(--border)); border-radius:.5rem; padding:.5rem; }
+  .contribution-canvas { position:relative; width:100%; }
+  .snake-animated, .contribution-calendar { position:absolute; inset:0; transition:opacity .18s ease; }
+  .snake-animated { opacity:0; visibility:hidden; pointer-events:none; }
+  .snake-frame img, .snake-frame svg { width:100%; height:100%; display:block; }
+  .snake-frame .snake-dark { display:none; }
+  .dark .snake-frame .snake-light { display:none; }
+  .dark .snake-frame .snake-dark { display:block; }
+  .month-label { fill:currentColor; font-size:12px; }
+  .contribution-day { stroke:var(--contribution-light-border); stroke-width:1; cursor:pointer; }
+  .dark .contribution-day { stroke:var(--contribution-dark-border); }
+  .contribution-day:hover, .contribution-day:focus, .contribution-day[data-selected] { stroke:hsl(var(--foreground)); stroke-width:2; outline:none; }
+  .contribution-day.level-0 { fill:var(--contribution-light-0); } .contribution-day.level-1 { fill:var(--contribution-light-1); } .contribution-day.level-2 { fill:var(--contribution-light-2); } .contribution-day.level-3 { fill:var(--contribution-light-3); } .contribution-day.level-4 { fill:var(--contribution-light-4); }
+  .dark .contribution-day.level-0 { fill:var(--contribution-dark-0); } .dark .contribution-day.level-1 { fill:var(--contribution-dark-1); } .dark .contribution-day.level-2 { fill:var(--contribution-dark-2); } .dark .contribution-day.level-3 { fill:var(--contribution-dark-3); } .dark .contribution-day.level-4 { fill:var(--contribution-dark-4); }
+  .snake-caption { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:.5rem; margin-top:.5rem; }
+  .snake-caption button { padding:.5rem .75rem; min-height:2.75rem; border:1px solid hsl(var(--border)); border-radius:.5rem; }
+  .snake-caption button:hover { background:hsl(var(--muted)); color:hsl(var(--foreground)); }
+  .snake-caption button:focus-visible, .calendar-inspector input:focus-visible { outline:2px solid hsl(var(--foreground)); outline-offset:3px; }
+  .calendar-inspector { display:flex; flex-wrap:wrap; gap:.5rem 1rem; align-items:center; min-height:2.75rem; margin-top:.25rem; }
+  .calendar-inspector label { display:flex; align-items:center; gap:.5rem; }
+  .calendar-inspector input { min-width:0; min-height:2.75rem; border:1px solid hsl(var(--border)); background:hsl(var(--background)); color:hsl(var(--foreground)); border-radius:.4rem; padding:.25rem .5rem; font-size:1rem; color-scheme:light; }
+  .dark .calendar-inspector input { color-scheme:dark; }
+  contribution-snake[data-playing='true'] .snake-animated { opacity:1; visibility:visible; }
+  contribution-snake[data-playing='true'] .contribution-calendar { opacity:0; visibility:hidden; pointer-events:none; }
+  contribution-snake[data-playing='true'] .calendar-inspector { display:none; }
+  @media (prefers-reduced-motion:reduce) { .snake-animated, .contribution-calendar { transition:none; } }
+</style>
+
+<script>
+  import { ContributionSnake } from '../../lib/contribution-view'
+  if (!customElements.get('contribution-snake')) customElements.define('contribution-snake', ContributionSnake)
+</script>

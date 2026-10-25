@@ -1,0 +1,37 @@
+{
+  "zh": {
+    "name": "梁若水",
+    "homeName": "梁若水",
+    "location": "",
+    "role": "软件工程本科生",
+    "spoiler": "",
+    "intro": "你好，我是梁若水，华南理工大学软件工程专业本科在读，目前关注大模型。",
+    "about": "你好，我是梁若水，华南理工大学软件工程专业本科在读。\n\n这里是我的个人主页，也为今后的学习记录和博文留一个位置。目前关注大模型，欢迎通过邮件或 GitHub 与我交流。",
+    "photoAlt": "",
+    "interests": "大模型",
+    "school": "华南理工大学 · SCUT",
+    "major": "软件工程",
+    "period": "本科在读",
+    "contactIntro": "欢迎通过邮件或 GitHub 与我交流。"
+  },
+  "en": {
+    "name": "Liang Jo-shui",
+    "homeName": "Liang Jo-shui",
+    "location": "",
+    "role": "Software Engineering undergraduate",
+    "spoiler": "",
+    "intro": "Hello, I’m Liang Jo-shui, a Software Engineering undergraduate at South China University of Technology. My current interest is large language models.",
+    "about": "Hello, I’m Liang Jo-shui, a Software Engineering undergraduate at South China University of Technology.\n\nThis is my personal website, with room for future learning notes and blog posts. My current interest is large language models. Feel free to reach out by email or on GitHub.",
+    "photoAlt": "",
+    "interests": "Large Language Models",
+    "school": "South China University of Technology · SCUT",
+    "major": "Software Engineering",
+    "period": "Undergraduate",
+    "contactIntro": "Feel free to reach out by email or on GitHub."
+  },
+  "avatar": "",
+  "photo": "",
+  "email": "l3onwat3r@gmail.com",
+  "github": "LeonWater1",
+  "schoolUrl": "https://www.scut.edu.cn/"
+}

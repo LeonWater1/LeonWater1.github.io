@@ -1,0 +1,111 @@
+---
+import { Image } from 'astro:assets'
+import { Button, Card, Icon, Label } from '@/components/user'
+import ContributionSnake from './ContributionSnake.astro'
+import PageLayout from '@/layouts/BaseLayout.astro'
+import Section from './Section.astro'
+import BlogStats from './BlogStats.astro'
+import avatar from '@/assets/avatar.png'
+import config from '@/site-config'
+import { profile } from '../../lib/cms-content'
+import { contentImage } from '../../lib/content-image'
+
+const en = Astro.currentLocale === 'en'
+const p = profile[en ? 'en' : 'zh']
+---
+
+<PageLayout meta={{ title: en ? 'Home' : '首页' }} highlightColor='#659EB966'>
+  <main class='home-layout'>
+    <section class='home-profile animate' id='content-header'>
+      <div class='profile-heading'>
+        {profile.avatar ? <img src={contentImage(profile.avatar)} alt={p.name} class='profile-avatar shrink-0 rounded-lg border p-1' width='176' height='176' loading='eager' /> : <Image
+          src={avatar}
+          alt={en ? 'Liang Jo-shui’s avatar' : '梁若水的头像'}
+          class='profile-avatar shrink-0 rounded-lg border p-1'
+          loading='eager'
+        />}
+        <div class='profile-details flex min-w-0 flex-col gap-y-4'>
+          <h1 class='text-3xl font-bold'>{p.homeName}</h1>
+          {!en && <p class='text-muted-foreground'>Liang Jo-shui</p>}
+          <div class='flex flex-wrap gap-x-1 gap-y-1'>
+            {p.location && (
+              <Label title={p.location}>
+                <Icon name='location' class='size-4' slot='icon' />
+              </Label>
+            )}
+            {profile.github && (
+              <Label title='GitHub' as='a' href={`https://github.com/${profile.github}`} target='_blank' rel='noopener noreferrer'>
+                <Icon name='github' class='size-4' slot='icon' />
+              </Label>
+            )}
+            {profile.email && (
+              <Label title={en ? 'Email' : '邮箱'} as='a' href={`mailto:${profile.email}`}>
+                <Icon name='email' class='size-4' slot='icon' />
+              </Label>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id='content' class='home-content animate'>
+      <Section title={en ? 'About' : '关于我'} class='home-section'>
+        <p class='font-medium'>
+          {p.role}{' '}
+          {p.spoiler && <button class='role-spoiler' type='button' aria-expanded='false' aria-label={en ? 'Reveal playful introduction' : '显示趣味介绍'} data-role-spoiler>
+            <span>{p.spoiler}</span>
+          </button>} 
+        </p>
+        <p class='home-intro text-muted-foreground'>
+          {p.intro}
+        </p>
+        <Button title={en ? 'More about me' : '更多关于我'} class='w-fit self-end' href={en ? '/en/about' : '/about'} style='ahead' />
+      </Section>
+      <Section title={en ? 'Education' : '教育背景'} class='home-section'>
+        <Card
+          as='a'
+          href={profile.schoolUrl}
+          heading={p.school}
+          subheading={p.major}
+          date={p.period}
+        />
+      </Section>
+      <Section title={en ? 'Statistics' : '站点统计'} class='home-section'>
+        <BlogStats blogStartDate={new Date(config.personal?.blogStartDate || '2026-09-19')} />
+      </Section>
+      <ContributionSnake />
+    </div>
+  </main>
+</PageLayout>
+
+<style>
+  /* Layout belongs here, without competing utility declarations at the same specificity. */
+  .home-layout { display:flex; width:100%; flex-direction:column; align-items:center; }
+  .home-profile { display:flex; flex-direction:column; align-items:center; margin-bottom:2.5rem; }
+  .profile-heading { display:flex; flex-direction:row; align-items:center; gap:1.5rem; }
+  .profile-avatar { width:7rem; height:7rem; object-fit:cover; }
+  .home-content { display:flex; width:100%; min-width:0; flex-direction:column; gap:2.5rem; }
+  .home-intro { line-height:1.9; text-align:justify; text-align-last:start; text-wrap:pretty; }
+  .home-intro:lang(en) { text-align:start; }
+  .role-spoiler { display:inline-block; border-radius:.3rem; background:hsl(var(--muted)); padding:.08em .35em; cursor:pointer; vertical-align:baseline; }
+  .role-spoiler span { opacity:0; transition:opacity .18s ease; }
+  .role-spoiler[aria-expanded='true'] span, .role-spoiler:focus-visible span { opacity:1; }
+  .role-spoiler:focus-visible { outline:2px solid hsl(var(--foreground)); outline-offset:3px; }
+  @media (hover:hover) { .role-spoiler:hover span { opacity:1; } }
+  @media (prefers-reduced-motion:reduce) { .role-spoiler span { transition:none; } }
+  @media (min-width:640px) { .profile-avatar { width:9rem; height:9rem; } }
+  @media (min-width:768px) and (max-width:1023px) { .home-content { width:80%; } }
+  @media (min-width:1024px) { .home-content { width:83.333%; } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-role-spoiler]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const expanded = button.getAttribute('aria-expanded') !== 'true'
+      button.setAttribute('aria-expanded', String(expanded))
+      button.setAttribute('aria-label', expanded
+        ? button.textContent?.trim() || ''
+        : document.documentElement.lang === 'en' ? 'Reveal playful introduction' : '显示趣味介绍')
+    })
+  })
+</script>

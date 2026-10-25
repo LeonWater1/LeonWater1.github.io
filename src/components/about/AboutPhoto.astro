@@ -1,0 +1,15 @@
+---
+import { profile } from '../../lib/cms-content'
+import { contentImage } from '../../lib/content-image'
+
+const en = Astro.currentLocale === 'en'
+---
+
+{profile.photo&&<figure class='about-photo not-prose'>
+  <img src={contentImage(profile.photo)} alt={profile[en ? 'en' : 'zh'].photoAlt} loading='eager' decoding='async' />
+</figure>}
+
+<style>
+  .about-photo { width:100%; max-width:44rem; margin:1.5rem 0; }
+  .about-photo :global(img) { display:block; width:100%; height:auto; border-radius:.5rem; }
+</style>

@@ -1,0 +1,24 @@
+---
+import { Button, CardList } from '@/components/user'
+import { cn } from '@/utils'
+import PageLayout from '@/layouts/BaseLayout.astro'
+import { integ, terms } from '@/site-config'
+
+const meta = {
+  title: '站点说明',
+  description: '本站的使用、隐私、版权与内容说明'
+}
+---
+
+<PageLayout {meta}>
+  <Button title='返回首页' href='/' style='back' />
+  <main class='mt-6 lg:mt-10'>
+    <div id='content-header' class='animate'>
+      <h1 class='mb-6 text-3xl font-medium'>站点说明</h1>
+    </div>
+
+    <div id='content' class={cn('animate mt-8 min-w-0 max-w-none', integ.typography.class)}>
+      <CardList {...terms} />
+    </div>
+  </main>
+</PageLayout>

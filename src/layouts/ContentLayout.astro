@@ -1,0 +1,77 @@
+---
+import { BackToTop } from '@/components/pages'
+import type { SiteMeta } from '@/types'
+import { cn } from '@/utils'
+import PageLayout from '@/layouts/BaseLayout.astro'
+import { integ } from '@/site-config'
+
+interface Props {
+  meta: SiteMeta
+  highlightColor?: string
+  back?: string
+}
+
+const { meta, highlightColor, ...props } = Astro.props
+---
+
+<PageLayout {meta} {highlightColor} {...props}>
+  <main class='content-layout mt-6'>
+    <div class='min-w-0' data-toc-content>
+      <article>
+        {/* Content header */}
+        <div id='content-header' class='animate'>
+          <slot name='header' />
+        </div>
+
+        {/* Content */}
+        <div
+          id='content'
+          class={cn('max-w-none animate mt-8', integ.typography.class)}
+        >
+          <slot />
+        </div>
+      </article>
+
+      <div class='mt-14 min-w-0 text-muted-foreground'>
+        <slot name='bottom' />
+      </div>
+    </div>
+
+    {/* This column spans both the article and comments, giving a short TOC room to stick. */}
+    <aside class='content-side-column'>
+      <div class='sidebar-track'>
+        <div class='content-sidebar animate' id='sidebar'>
+          <slot name='sidebar' />
+        </div>
+      </div>
+      <div class='content-bottom-sidebar'>
+        <slot name='bottom-sidebar' />
+      </div>
+    </aside>
+  </main>
+
+  <BackToTop header='content-header' content='content' />
+</PageLayout>
+
+<style>
+  .content-side-column { display:none; }
+
+  @media (min-width:768px) {
+    .content-layout { display:grid; grid-template-columns:minmax(0, 1fr) 15rem; column-gap:2.5rem; }
+    .content-side-column { display:flex; min-width:0; flex-direction:column; }
+    .sidebar-track { flex:1; min-height:0; }
+    .content-sidebar {
+      position:sticky;
+      top:6rem;
+      max-height:calc(100vh - 8rem);
+      max-height:calc(100dvh - 8rem);
+      overflow-y:auto;
+      scrollbar-width:thin;
+    }
+    .content-sidebar:has(toc-heading) {
+      height:calc(100vh - 8rem);
+      height:calc(100dvh - 8rem);
+    }
+    .content-bottom-sidebar { flex-shrink:0; }
+  }
+</style>

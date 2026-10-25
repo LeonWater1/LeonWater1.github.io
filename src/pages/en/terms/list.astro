@@ -1,0 +1,25 @@
+---
+import { Button, CardList } from '@/components/user'
+import { cn } from '@/utils'
+import PageLayout from '@/layouts/BaseLayout.astro'
+import { integ, englishTerms } from '@/site-config'
+
+const meta = {
+  title: 'Site policy',
+  description: 'How this site handles privacy, comments, copyright and content'
+}
+
+---
+
+<PageLayout {meta}>
+  <Button title='Back' href='/en' style='back' />
+  <main class='mt-6 lg:mt-10'>
+    <div id='content-header' class='animate'>
+      <h1 class='mb-6 text-3xl font-medium'>Site Policy</h1>
+    </div>
+
+    <div id='content' class={cn('animate mt-8 min-w-0 max-w-none', integ.typography.class)}>
+      <CardList {...englishTerms} />
+    </div>
+  </main>
+</PageLayout>

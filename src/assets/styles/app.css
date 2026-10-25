@@ -1,0 +1,83 @@
+@import "tailwindcss" source("../../");
+@config "../../../tailwind.config.mjs";
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Astro-rendered MDX and the shared browser renderer use the same dual themes. */
+.astro-code, .astro-code span { color:var(--shiki-light); background-color:var(--shiki-light-bg); }
+.dark .astro-code, .dark .astro-code span { color:var(--shiki-dark); background-color:var(--shiki-dark-bg); }
+.astro-code pre { margin:0; background:transparent; color:inherit; font:400 .875rem/1.65 Consolas,"Liberation Mono",Menlo,Courier,monospace; tab-size:4; }
+
+/* Preserve the theme's Tailwind 3 defaults during the framework migration. */
+@layer base {
+  button:not(:disabled), [role="button"]:not(:disabled) { cursor:pointer; }
+  input::placeholder, textarea::placeholder { color:var(--color-gray-400); }
+  dialog { margin:auto; }
+}
+
+
+
+
+
+
+
+
+
+
+
+@layer base {
+  :root {
+    --background: 210 33% 99%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 200 29% 45%;
+    --primary-foreground: 0 0% 92.5%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95%;
+    --muted-foreground: 240 3.8% 28.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 72.22% 50.59%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 88%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 240 20.54% 5.2%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 195 95% 85%;
+    --primary-foreground: 240 3.7% 15.9%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 5.9% 12%;
+    --muted-foreground: 240 5% 74.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 19.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  a {
+    @apply transition-colors hover:text-primary;
+  }
+}

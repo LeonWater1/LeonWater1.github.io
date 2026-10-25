@@ -1,0 +1,71 @@
+name: Deploy website
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    # Attempt an hourly refresh. GitHub may delay or skip scheduled runs.
+    - cron: '17 * * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      ASTRO_TELEMETRY_DISABLED: '1'
+      PUBLIC_SUPABASE_URL: ${{ vars.PUBLIC_SUPABASE_URL }}
+      PUBLIC_SUPABASE_ANON_KEY: ${{ vars.PUBLIC_SUPABASE_ANON_KEY }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run test:database
+      - name: Generate the contribution animations
+        continue-on-error: true
+        uses: Platane/snk/svg-only@d8f6715049803e982ee5ff501b6b9b7d5deeb09b
+        with:
+          github_user_name: LeonWater1
+          outputs: |
+            /tmp/contributions/github-contribution-grid-snake.svg?color_snake=%230969da&color_dots=%23eff2f5,%23aceebb,%234ac26b,%232da44e,%23116329&color_dot_border=%231f23280d
+            /tmp/contributions/github-contribution-grid-snake-dark.svg?palette=github-dark&color_snake=%234493f8&color_dots=%23151b23,%23033a16,%23196c2e,%232ea043,%2356d364&color_dot_border=%230104090d
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: Save the matching calendar and animations
+        continue-on-error: true
+        run: node scripts/generate-contributions.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CONTRIBUTION_SVG_DIR: /tmp/contributions
+      - name: Refresh contributions and build the site
+        run: npm run build
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: Verify the generated contribution bundle
+        run: node --test tests/contribution-snake.test.mjs tests/github-calendar.test.mjs
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

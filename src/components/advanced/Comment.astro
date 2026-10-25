@@ -1,0 +1,230 @@
+---
+import CommentAuth from './CommentAuth.astro'
+import { commentThread } from '../../lib/comment-utils'
+import { profile } from '../../lib/cms-content'
+import 'katex/dist/katex.min.css'
+import '../../assets/styles/article-content.css'
+interface Props { thread?: string; class?: string }
+const lang = Astro.currentLocale === 'en' ? 'en' : 'zh'
+const en = lang === 'en'
+const thread = commentThread(Astro.props.thread ?? Astro.url.pathname)
+const ownerAvatar = profile.avatar || '/avatar/avatar.png'
+---
+<site-comments id='comments' data-thread={thread} data-lang={lang} data-owner-avatar={ownerAvatar} class:list={['not-prose comment-panel', Astro.props.class]} data-pagefind-ignore>
+  <header class='comment-heading'>
+    <h2>{en ? 'Conversation' : '留言与交流'}</h2>
+    <p>{en ? 'Thoughts, questions, and friendly conversations are welcome.' : '欢迎分享想法、提出问题，也欢迎来打个招呼。'}</p>
+  </header>
+  <p data-boot role='status'>{en ? 'Loading conversation…' : '正在加载留言…'}</p>
+  <div data-unconfigured hidden>
+    <p>{en ? 'The comment service is being prepared. You can reach me by email in the meantime.' : '留言服务正在准备中，暂时欢迎通过邮箱与我交流。'}</p>
+    <a href='mailto:l3onwat3r@gmail.com'>l3onwat3r@gmail.com</a>
+  </div>
+  <div data-configured hidden>
+    <CommentAuth lang={lang} />
+    <div data-login-reply hidden class='comment-reply-preview comment-login-reply'><span data-login-reply-label></span><button type='button' data-cancel-login-reply>{en ? 'Cancel reply' : '取消回复'}</button></div>
+    <div data-login-prompt hidden class='comment-login-prompt'>
+      <p>{en ? 'Join the conversation' : '一起聊聊吧'}<span>{en ? 'Sign in with a verified email to leave a comment.' : '验证邮箱并登录后，就可以留言和回复。'}</span></p>
+      <button type='button' data-sign-in>{en ? 'Sign in to comment' : '登录后留言'}</button>
+    </div>
+    <div data-identity-home></div>
+    <div data-compose-home><form data-compose hidden>
+      <div data-identity class='comment-identity' hidden>
+        <span data-identity-avatar class='comment-avatar' aria-hidden='true'></span>
+        <strong data-identity-name></strong><span data-owner-badge class='comment-badge' hidden>{en ? 'Site owner' : '站长'}</span>
+        <span data-restricted-badge class='comment-badge' hidden>{en ? 'Posting restricted' : '暂时禁言'}</span>
+        <button type='button' data-profile-edit class='comment-text-button'>{en ? 'Edit nickname' : '修改昵称'}</button>
+        <button type='button' data-avatar-edit hidden class='comment-text-button'>{en ? 'Change avatar' : '设置头像'}</button>
+        <button type='button' data-avatar-remove hidden class='comment-text-button'>{en ? 'Remove avatar' : '移除头像'}</button>
+        <div data-avatar-editor hidden class='comment-avatar-editor'>
+          <label>{en ? 'Choose a picture' : '选择图片'}<input data-avatar-file type='file' accept='image/jpeg,image/png,image/webp' aria-describedby='comment-avatar-help' /></label>
+          <p id='comment-avatar-help' class='comment-note'>{en ? 'Still JPEG, PNG or WebP · Up to 8 MiB. The picture is cropped to a square in your browser.' : '静态 JPEG、PNG 或 WebP，最大 8 MiB；图片会在浏览器中居中裁成正方形。'}</p>
+          <div data-avatar-preview hidden class='comment-avatar-preview'>
+            <img data-avatar-preview-image width='96' height='96' alt={en ? 'Your new avatar preview' : '新头像预览'} />
+            <p class='comment-note'>{en ? 'Saving makes this avatar public beside all your comments, including earlier ones. Only the cropped image is uploaded; original photo metadata is removed.' : '保存后，这张头像会随你的所有留言公开显示，包括之前的留言。只上传裁剪后的图片，原图附带信息会被移除。'}</p>
+          </div>
+          <div class='comment-profile-actions'><button type='button' data-avatar-save disabled>{en ? 'Save avatar' : '保存头像'}</button><button type='button' data-avatar-cancel>{en ? 'Cancel' : '取消'}</button></div>
+        </div>
+      </div>
+      <div data-profile-editor hidden class='comment-profile-editor'>
+        <label>{en ? 'Public nickname' : '公开昵称'}<input name='nickname' maxlength='40' autocomplete='nickname' aria-describedby='comment-name-hint' /></label>
+        <p id='comment-name-hint' data-profile-hint class='comment-note'></p>
+        <div class='comment-profile-actions'><button type='button' data-profile-save>{en ? 'Save nickname' : '保存昵称'}</button><button type='button' data-profile-cancel>{en ? 'Cancel' : '取消'}</button></div>
+      </div>
+      <div data-reply hidden class='comment-reply-preview'><div><span></span><p data-reply-excerpt></p></div><button type='button' data-cancel-reply>{en ? 'Cancel reply' : '取消回复'}</button></div>
+      <div class='comment-editor-tabs' role='group' aria-label={en ? 'Comment editor' : '留言编辑器'}>
+        <button type='button' data-markdown-write aria-pressed='true'>{en ? 'Write' : '编辑'}</button>
+        <button type='button' data-markdown-preview-toggle aria-pressed='false'>{en ? 'Preview' : '预览'}</button>
+        <span>Markdown</span>
+      </div>
+      <label data-comment-input class='comment-body-label'>{en ? 'Your comment' : '留言内容'}<textarea name='body' rows='4' maxlength='4000' required placeholder={en ? 'Share a thought or say hello… Markdown is welcome.' : '分享想法，或来打个招呼… 支持 Markdown。'} aria-describedby='comment-guide'></textarea></label>
+      <div data-markdown-preview hidden class='comment-body comment-markdown comment-preview' tabindex='0' role='region' aria-label={en ? 'Comment preview' : '留言预览'}></div>
+      <div class='comment-compose-foot'><div class='comment-compose-meta'><span data-counter aria-live='off'>0 / 2000</span><span class='comment-shortcut'>{en ? 'Ctrl / ⌘ + Enter to post' : 'Ctrl / ⌘ + Enter 发布'}</span></div><button type='submit' data-submit disabled>{en ? 'Post comment' : '发布留言'}</button></div>
+      <p data-moderation-note hidden class='comment-note' aria-live='polite'>{en ? 'Your comment will be public after the site owner approves it. You can view or delete it while it is pending.' : '留言将在站长审核通过后公开；等待期间你可以查看或删除自己的留言。'}</p>
+      <details class='comment-markdown-help'><summary>{en ? 'Formatting help' : '格式说明'}</summary>
+        <p>{en ? 'Use **bold**, *italic*, ~~strikethrough~~, # headings, > quotes, - lists, - [x] tasks, [text](https://…), and `code`. Separate paragraphs with a blank line.' : '支持 **粗体**、*斜体*、~~删除线~~、# 标题、> 引用、- 列表、- [x] 任务、[文字](https://…) 和 `代码`。段落之间请空一行。'}</p>
+        <p>{en ? 'Code blocks: wrap lines in ``` fences. Tables use | columns |; footnotes use [^1]. Math uses $inline$ or $$ on separate lines. Images use ![description](https://…).' : '代码块用 ``` 包围；表格用 | 分隔各列；脚注用 [^1] 引用。行内公式用 $…$，独立公式用单独成行的 $$ 包围。图片用 ![描述](https://…)。'}</p>
+        <p>{en ? 'Preview before posting. External images load only when clicked; their source is shown first. Raw HTML is shown as text, and scripts or embedded pages never run.' : '发布前可以先预览。外部图片会先显示来源，点击后才加载；原始 HTML 按文字显示，不运行脚本或嵌入网页。'}</p>
+      </details>
+      <p id='comment-guide' class='comment-note'>{en ? 'Email stays private · Deleting your comment keeps other people’s replies.' : '邮箱不公开 · 删除留言会保留他人的回复'} <a href={en ? '/en/terms/privacy-policy' : '/terms/privacy-policy'}>{en ? 'Privacy' : '隐私说明'}</a></p>
+    </form></div>
+    <details data-admin hidden class='comment-admin'><summary>{en ? 'Comment settings' : '留言管理设置'}</summary><label><input type='checkbox' data-moderation /> {en ? 'Review new comments before publishing' : '新评论先审核再公开'}</label></details>
+    <div data-status-home><p data-status role='status' aria-live='polite'></p></div>
+    <div class='comment-list-heading'><h3>{en ? 'Recent comments' : '最近留言'}</h3><button type='button' data-refresh>{en ? 'Refresh' : '刷新'}</button></div>
+    <p data-update-note hidden class='comment-note' role='status'><button type='button' data-apply-update>{en ? 'The conversation has changed · Refresh comments' : '留言有更新 · 刷新留言'}</button></p>
+    <ol data-list class='comment-list'></ol>
+    <p data-empty hidden class='comment-empty'>{en ? 'No comments yet. Be the first to say hello.' : '这里还很安静，来留下第一声问候吧。'}</p>
+    <button type='button' data-more hidden>{en ? 'Load more comments and replies' : '加载更多留言与回复'}</button>
+  </div>
+  <noscript>{en ? 'JavaScript is needed to load comments. You can also contact me by email.' : '留言功能需要启用 JavaScript，也可通过邮箱联系我。'}</noscript>
+  <dialog aria-labelledby='comment-confirm-title'><form method='dialog'>
+    <h3 id='comment-confirm-title'></h3><p data-confirm-description></p>
+    <div class='comment-dialog-actions'><button value='cancel'>{en ? 'Cancel' : '取消'}</button><button value='confirm' data-confirm-button>{en ? 'Confirm' : '确认'}</button></div>
+  </form></dialog>
+</site-comments>
+<script>
+  import '../../lib/comments'
+</script>
+<style is:global>
+  site-comments { display:block; scroll-margin-top:6rem; padding:clamp(1.2rem,3vw,2rem); border:1px solid hsl(var(--border)); border-radius:1rem; background:hsl(var(--background)); }
+  site-comments [hidden] { display:none !important; }
+  site-comments h2 { font-size:1.35rem; font-weight:600; margin:0 0 .5rem; }
+  site-comments h3 { font-weight:600; }
+  site-comments p { margin:.65rem 0; }
+  site-comments .comment-heading > p, site-comments .comment-note, site-comments [data-counter], site-comments time { color:hsl(var(--muted-foreground)); font-size:.875rem; }
+  site-comments label { display:block; font-size:.9rem; margin:.85rem 0; }
+  site-comments input:not([type=checkbox]), site-comments textarea { display:block; width:100%; min-width:0; margin-top:.4rem; padding:.7rem .85rem; border:1px solid hsl(var(--border)); border-radius:.5rem; background:hsl(var(--background)); color:hsl(var(--foreground)); font:inherit; font-size:1rem; }
+  site-comments textarea { resize:vertical; min-height:6.5rem; line-height:1.65; }
+  site-comments button { padding:.5rem .8rem; border:1px solid hsl(var(--border)); border-radius:.5rem; font:inherit; font-size:.875rem; cursor:pointer; }
+  site-comments button:hover:not(:disabled) { background:hsl(var(--muted)); }
+  site-comments button:disabled { opacity:.55; cursor:not-allowed; }
+  site-comments :is(button,a,input,textarea,summary):focus-visible { outline:2px solid hsl(var(--foreground)); outline-offset:3px; }
+  site-comments [data-submit], site-comments [data-confirm-button] { background:hsl(var(--foreground)); color:hsl(var(--background)); }
+  site-comments [data-submit]:hover:not(:disabled), site-comments [data-confirm-button]:hover { background:hsl(var(--foreground) / .85); }
+  site-comments a { text-decoration:underline; text-underline-offset:3px; }
+  site-comments .comment-compose-foot, site-comments .comment-list-heading, site-comments .comment-dialog-actions { display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+  site-comments .comment-list-heading { margin:1.5rem 0 .5rem; }
+  site-comments .comment-list { padding:0; list-style:none; }
+  site-comments .comment-item { border-top:1px solid hsl(var(--border)); padding:1.15rem 0; overflow-wrap:anywhere; scroll-margin-top:6rem; }
+  site-comments .comment-item-reply { margin-left:clamp(.75rem,3vw,2.25rem); }
+  site-comments .comment-thread-replies { list-style:none; padding:0; margin:.75rem 0 0; }
+  site-comments .comment-thread > .comment-thread-replies > .comment-item:last-child { padding-bottom:0; }
+  site-comments .comment-unavailable { color:hsl(var(--muted-foreground)); padding:.75rem 0; font-size:.875rem; }
+  site-comments .comment-author-email { font-size:.8rem; color:hsl(var(--muted-foreground)); overflow-wrap:anywhere; }
+  site-comments .comment-author-email button { display:inline-block; margin-inline-start:.5rem; padding:.25rem .5rem; text-decoration:underline; text-underline-offset:3px; }
+  site-comments .comment-thread-gap { margin:.75rem 0 .75rem clamp(.75rem,3vw,2.25rem); padding:.5rem .8rem; border-left:2px dashed hsl(var(--border)); color:hsl(var(--muted-foreground)); font-size:.875rem; }
+  site-comments .comment-item-header { display:flex; align-items:center; gap:.55rem; flex-wrap:wrap; }
+  site-comments .comment-item-header strong { font-weight:600; }
+  site-comments .comment-body { line-height:1.8; min-width:0; overflow-wrap:anywhere; }
+  site-comments .comment-markdown > :first-child { margin-top:0; }
+  site-comments .comment-markdown > :last-child { margin-bottom:0; }
+  site-comments .comment-markdown { margin:.8rem 0; font-size:.925rem; }
+  site-comments .comment-markdown :is(h1,h2,h3,h4,h5,h6) { font-weight:600; line-height:1.5; margin:1.1rem 0 .45rem; }
+  site-comments .comment-markdown h1 { font-size:1.3rem; }
+  site-comments .comment-markdown h2 { font-size:1.2rem; }
+  site-comments .comment-markdown :is(h3,h4,h5,h6) { font-size:1rem; }
+  site-comments .comment-markdown :is(ul,ol) { margin:.6rem 0; padding-left:1.5rem; }
+  site-comments .comment-markdown ul { list-style:disc; }
+  site-comments .comment-markdown ol { list-style:decimal; }
+  site-comments .comment-markdown li { padding-left:.15rem; }
+  site-comments .comment-markdown blockquote { border-left:3px solid hsl(var(--border)); margin:.8rem 0; padding:.1rem .9rem; color:hsl(var(--muted-foreground)); }
+  site-comments .comment-markdown :not(pre) > code { font-size:.85em; padding:.15em .35em; border-radius:.25rem; background:hsl(var(--muted)); overflow-wrap:anywhere; }
+  site-comments .comment-markdown pre:not(.shiki) { max-width:100%; overflow-x:auto; padding:1rem; border:1px solid hsl(var(--border)); border-radius:.5rem; background:hsl(var(--muted) / .6); font-size:.875rem; line-height:1.65; tab-size:4; }
+  site-comments .comment-markdown pre code { white-space:pre; }
+  site-comments .comment-markdown table { display:block; max-width:100%; overflow-x:auto; border-collapse:collapse; margin:.8rem 0; font-size:.85rem; }
+  site-comments .comment-markdown :is(th,td) { border:1px solid hsl(var(--border)); padding:.45rem .65rem; min-width:5rem; }
+  site-comments .comment-markdown th { background:hsl(var(--muted)); font-weight:600; }
+  site-comments .comment-markdown .task-list-item { list-style:none; }
+  site-comments .comment-markdown input[type=checkbox] { width:.9rem; height:.9rem; margin:0 .4rem 0 -1.2rem; accent-color:hsl(var(--foreground)); }
+  site-comments .comment-markdown .katex-display { max-width:100%; overflow-x:auto; overflow-y:hidden; padding:.4em .1em; }
+  site-comments .comment-markdown .katex { font-size:1.05em; }
+  site-comments .comment-markdown .katex-display > .katex { min-width:max-content; }
+  site-comments .comment-math-inline { display:inline-block; max-width:100%; overflow-x:auto; overflow-y:hidden; vertical-align:middle; padding:.4em .1em; }
+  site-comments .comment-math-inline > .katex { display:block; padding:0 .2em; }
+  site-comments .comment-markdown .footnotes { margin-top:1rem; padding-top:.5rem; border-top:1px dashed hsl(var(--border)); font-size:.8rem; }
+  site-comments .comment-markdown [id] { scroll-margin-top:6rem; }
+  site-comments .comment-markdown hr { border:0; border-top:1px solid hsl(var(--border)); margin:1rem 0; }
+  site-comments .comment-markdown-image { display:block; width:fit-content; max-width:100%; margin:.5rem 0; padding:.6rem; border:1px dashed hsl(var(--border)); border-radius:.5rem; }
+  site-comments .comment-markdown-image > span { display:block; margin-bottom:.3rem; color:hsl(var(--muted-foreground)); font-size:.85rem; }
+  site-comments .comment-markdown-image img { display:block; max-width:100%; max-height:26rem; object-fit:contain; border-radius:.3rem; }
+  site-comments .comment-load-image { text-align:start; max-width:100%; overflow-wrap:anywhere; }
+  site-comments .comment-editor-tabs { display:flex; align-items:center; gap:.3rem; margin:.8rem 0; border-bottom:1px solid hsl(var(--border)); padding-bottom:.4rem; }
+  site-comments .comment-editor-tabs button { border-color:transparent; padding:.35rem .7rem; }
+  site-comments .comment-editor-tabs button[aria-pressed=true] { background:hsl(var(--muted)); font-weight:600; }
+  site-comments .comment-editor-tabs > span { margin-left:auto; color:hsl(var(--muted-foreground)); font-size:.75rem; }
+  site-comments .comment-preview { min-height:8rem; max-height:32rem; overflow:auto; border:1px solid hsl(var(--border)); border-radius:.5rem; padding:.75rem; }
+  site-comments .comment-markdown-help { font-size:.75rem; color:hsl(var(--muted-foreground)); margin-top:.75rem; }
+  site-comments .comment-markdown-help summary { cursor:pointer; width:fit-content; padding:.25rem 0; }
+  site-comments .comment-markdown-help p { line-height:1.7; }
+  site-comments .comment-context { border-left:2px solid hsl(var(--border)); padding-left:.7rem; font-size:.85rem; color:hsl(var(--muted-foreground)); }
+  site-comments .comment-item-actions { display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.6rem; }
+  site-comments .comment-item-actions button { border-color:transparent; padding:.25rem .5rem; color:hsl(var(--muted-foreground)); }
+  site-comments .comment-badge { font-size:.75rem; border:1px solid hsl(var(--border)); border-radius:.3rem; padding:.1rem .35rem; }
+  site-comments [data-status]:empty { display:none; }
+  site-comments [data-status] { background:hsl(var(--muted)); border-radius:.5rem; padding:.7rem .9rem; font-size:.9rem; }
+  site-comments [data-status][data-error=true] { border-left:3px solid #c35757; }
+  site-comments [data-reply] { padding:.65rem .8rem; border-radius:.5rem; background:hsl(var(--muted)); }
+  site-comments .comment-admin { margin:1rem 0; color:hsl(var(--muted-foreground)); font-size:.85rem; }
+  site-comments .comment-admin summary { cursor:pointer; width:fit-content; padding:.35rem 0; }
+  site-comments .comment-admin label { margin:.5rem 0; }
+  site-comments [data-compose] { margin-top:1rem; padding:1rem; border:1px solid hsl(var(--border)); border-radius:.75rem; }
+  site-comments .comment-compose-reply { margin-top:.8rem; background:hsl(var(--muted) / .22); }
+  site-comments .comment-identity { display:flex; align-items:center; flex-wrap:wrap; gap:.5rem; font-size:.9rem; }
+  site-comments [data-identity-home]:not(:empty) { padding:.75rem 0; }
+  site-comments .comment-login-reply { margin:.75rem 0; padding:.65rem .8rem; border-radius:.5rem; background:hsl(var(--muted)); }
+  site-comments .comment-identity strong { font-weight:600; min-width:0; max-width:100%; overflow-wrap:anywhere; }
+  site-comments .comment-avatar { display:inline-flex; position:relative; overflow:hidden; flex:none; align-items:center; justify-content:center; width:2rem; height:2rem; border-radius:50%; background:hsl(var(--muted)); color:hsl(var(--muted-foreground)); font-size:.75rem; font-weight:600; user-select:none; }
+  site-comments .comment-avatar img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  site-comments .comment-avatar-editor { flex-basis:100%; min-width:0; padding:.75rem; margin-top:.4rem; border-radius:.5rem; background:hsl(var(--muted) / .5); }
+  site-comments .comment-avatar-editor label { margin:0; }
+  site-comments .comment-avatar-editor input[type=file] { max-width:100%; overflow:hidden; font-size:.8rem; }
+  site-comments .comment-avatar-preview { display:flex; align-items:center; gap:1rem; margin:.8rem 0; }
+  site-comments .comment-avatar-preview img { flex:none; width:6rem; height:6rem; border-radius:50%; object-fit:cover; }
+  site-comments .comment-avatar-preview p { min-width:0; margin:0; line-height:1.6; }
+  site-comments .comment-text-button { border-color:transparent; padding:.25rem .4rem; color:hsl(var(--muted-foreground)); }
+  site-comments .comment-profile-editor { padding:.7rem; border-radius:.5rem; background:hsl(var(--muted) / .5); }
+  site-comments .comment-profile-editor label { margin:0; }
+  site-comments .comment-profile-editor input { max-width:24rem; }
+  site-comments .comment-profile-actions { display:flex; flex-wrap:wrap; gap:.5rem; }
+  site-comments .comment-profile-actions button { padding:.35rem .65rem; }
+  site-comments .comment-body-label { font-size:.85rem; color:hsl(var(--muted-foreground)); }
+  site-comments .comment-body-label textarea { color:hsl(var(--foreground)); }
+  site-comments .comment-reply-preview { display:flex; align-items:start; justify-content:space-between; gap:.5rem; font-size:.85rem; }
+  site-comments .comment-reply-preview > div { min-width:0; }
+  site-comments .comment-reply-preview [data-reply-excerpt] { margin:.25rem 0 0; color:hsl(var(--muted-foreground)); overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+  site-comments .comment-reply-preview button { flex:none; padding:.25rem .4rem; border-color:transparent; }
+  site-comments .comment-compose-meta { display:flex; flex-wrap:wrap; align-items:center; gap:.25rem .8rem; font-size:.75rem; color:hsl(var(--muted-foreground)); }
+  site-comments .comment-compose-foot [data-submit] { flex:none; }
+  site-comments #comment-guide { font-size:.75rem; line-height:1.7; margin:.75rem 0 0; }
+  site-comments .comment-empty { padding:1.2rem .5rem; text-align:center; color:hsl(var(--muted-foreground)); font-size:.9rem; }
+  site-comments .comment-login-prompt { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.6rem; padding:1rem 0; }
+  site-comments .comment-login-prompt p { margin:0; font-size:.95rem; }
+  site-comments .comment-login-prompt span { display:block; margin-top:.25rem; color:hsl(var(--muted-foreground)); font-size:.85rem; }
+  site-comments:has(comment-auth [data-guest]:not([hidden])) [data-login-prompt] { display:none; }
+  site-comments .comment-menu { position:relative; }
+  site-comments .comment-menu summary { cursor:pointer; list-style:none; padding:.25rem .5rem; border-radius:.5rem; color:hsl(var(--muted-foreground)); font-size:.875rem; }
+  site-comments .comment-menu summary::-webkit-details-marker { display:none; }
+  site-comments .comment-menu summary:hover { background:hsl(var(--muted)); }
+  site-comments .comment-menu-choices { position:absolute; z-index:5; min-width:10rem; left:0; top:calc(100% + .25rem); display:flex; flex-direction:column; align-items:stretch; gap:.15rem; padding:.35rem; border:1px solid hsl(var(--border)); border-radius:.6rem; background:hsl(var(--background)); box-shadow:0 4px 16px rgb(0 0 0 / .1); }
+  site-comments .comment-menu-choices button { text-align:start; white-space:nowrap; }
+  @media (max-width:480px) {
+    site-comments .comment-avatar-preview { flex-wrap:wrap; }
+    site-comments { padding:1rem; }
+    site-comments [data-compose] { padding:.75rem; }
+    site-comments .comment-item-header time { flex-basis:100%; padding-left:2.55rem; font-size:.75rem; }
+    site-comments .comment-shortcut { display:none; }
+    site-comments .comment-item-actions button, site-comments .comment-menu summary { min-height:2.5rem; display:inline-flex; align-items:center; }
+    site-comments .comment-compose-foot { gap:.5rem; }
+    site-comments .comment-item-actions { position:relative; }
+    site-comments .comment-menu { position:static; }
+    site-comments .comment-menu-choices { left:auto; right:0; max-width:100%; min-width:min(10rem,100%); }
+    site-comments .comment-menu-choices button { white-space:normal; }
+  }
+  site-comments dialog { width:min(90vw,28rem); padding:1.5rem; border:1px solid hsl(var(--border)); border-radius:1rem; color:hsl(var(--foreground)); background:hsl(var(--background)); }
+  @media (pointer:coarse) {
+    site-comments button, site-comments summary { min-height:2.75rem; }
+    site-comments .comment-item-actions button, site-comments .comment-menu summary { min-height:2.75rem; }
+  }
+  site-comments dialog::backdrop { background:rgb(0 0 0 / .45); }
+  site-comments .comment-dialog-actions { justify-content:flex-end; margin-top:1.25rem; }
+</style>

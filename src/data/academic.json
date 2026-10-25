@@ -1,0 +1,28 @@
+{
+  "zh": {
+    "background": "你好，我是梁若水，华南理工大学软件工程专业本科在读，目前关注大模型。",
+    "interests": [
+      {
+        "title": "大模型",
+        "description": "",
+        "icon": "brain"
+      }
+    ],
+    "publications": [],
+    "projects": [],
+    "cv": ""
+  },
+  "en": {
+    "background": "Hello, I’m Liang Jo-shui, a Software Engineering undergraduate at South China University of Technology. My current interest is large language models.",
+    "interests": [
+      {
+        "title": "Large Language Models",
+        "description": "",
+        "icon": "brain"
+      }
+    ],
+    "publications": [],
+    "projects": [],
+    "cv": ""
+  }
+}

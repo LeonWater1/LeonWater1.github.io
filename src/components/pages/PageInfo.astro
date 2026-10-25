@@ -1,0 +1,16 @@
+---
+import { cn } from '@/utils'
+
+const { class: className, hideComment, ...props } = Astro.props
+
+const isArticle = /^\/(en\/)?blog\/(?!all(?:\/|$))/.test(Astro.url.pathname)
+const enabled = Boolean(import.meta.env.PUBLIC_SUPABASE_URL && import.meta.env.PUBLIC_SUPABASE_ANON_KEY)
+---
+
+{
+  enabled && isArticle && !hideComment && (
+    <div class={cn('text-base text-sm text-muted-foreground', className)} {...props}>
+      <a href='#comments'>{Astro.currentLocale === 'en' ? 'Join the conversation' : '参与讨论'}</a>
+    </div>
+  )
+}

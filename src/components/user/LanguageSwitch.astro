@@ -1,0 +1,69 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n'
+import Icon from './Icon.astro'
+
+// 获取当前语言
+const currentLocale = Astro.currentLocale || 'zh'
+
+// 定义语言映射
+const languages = {
+  zh: '中文',
+  en: 'English'
+} as const
+
+// 类型安全的当前语言
+const safeCurrentLocale = (currentLocale === 'zh' || currentLocale === 'en') ? currentLocale : 'zh'
+
+// 计算目标语言
+const targetLocale = safeCurrentLocale === 'zh' ? 'en' : 'zh'
+const switchLabel = safeCurrentLocale === 'en' ? 'Switch to Chinese' : '切换到 English'
+
+// 获取当前页面路径（不包含语言前缀）
+const currentPath = Astro.url.pathname
+let pagePath = ''
+
+if (safeCurrentLocale === 'en') {
+  if (currentPath === '/en') {
+    // 英文首页
+    pagePath = '/'
+  } else if (currentPath.startsWith('/en/')) {
+    // 英文其他页面，移除 /en/ 前缀
+    pagePath = currentPath.slice(3) || '/'
+  } else {
+    // 默认情况
+    pagePath = currentPath
+  }
+} else if (safeCurrentLocale === 'zh') {
+  // 如果是中文页面，直接使用路径
+  pagePath = currentPath
+} else {
+  // 默认情况
+  pagePath = currentPath
+}
+
+// GitHub Pages has one shared 404 document; switch to the other language's home.
+if (/^\/404(?:\.html)?\/?$/.test(pagePath)) pagePath = '/'
+
+// 生成目标语言的 URL
+let targetUrl = getRelativeLocaleUrl(targetLocale, pagePath)
+
+// 处理 trailingSlash: 'never' 配置
+// 移除尾部斜杠（除了根路径 /）
+if (targetUrl !== '/' && targetUrl.endsWith('/')) {
+  targetUrl = targetUrl.slice(0, -1)
+}
+---
+
+<a
+  id="language-switch-btn"
+  class="box-content rounded-md border p-1.5 transition-colors hover:bg-border md:group-[.not-top]:rounded-xl"
+  title={switchLabel}
+  href={targetUrl}
+  hreflang={targetLocale}
+>
+  <span class="sr-only">{switchLabel}</span>
+  <div class="flex items-center gap-1">
+    <Icon name="earth" class="size-4" />
+    <span class="text-xs font-medium">{languages[safeCurrentLocale]}</span>
+  </div>
+</a>

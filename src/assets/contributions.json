@@ -1,0 +1,14 @@
+{
+  "source": "https://github.com/LeonWater1",
+  "sourceCommit": "da37ac91afd4a4c754dea74cfcb17a23acbb9db1",
+  "fetchedAt": "2026-10-25T06:48:10.167Z",
+  "checkedAt": "2026-10-25T06:48:10.167Z",
+  "dataThrough": "2026-10-25",
+  "dataHash": "a46669a474bc0e693bc8ef958e8136f8539f7b9cc5d49a563790bdf659ac7fa5",
+  "rendererVersion": "Platane/snk-profile",
+  "width": 880,
+  "height": 192,
+  "cycleDurationMs": 16700,
+  "light": "/contributions/snake-light-1323429edcef.svg",
+  "dark": "/contributions/snake-dark-fff6e236347a.svg"
+}

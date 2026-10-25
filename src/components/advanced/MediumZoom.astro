@@ -1,0 +1,71 @@
+---
+// https://github.com/francoischalifour/medium-zoom
+import config from '@/site-config'
+
+if (!config.integ.mediumZoom.enable) return {}
+
+interface Props {
+  selector?: string
+  background?: string
+}
+
+const { selector = config.integ.mediumZoom.selector, background = 'hsl(var(--background) / 0.8)' } =
+  Astro.props
+---
+
+<site-image-zoom hidden data-selector={selector} data-background={background}></site-image-zoom>
+<script>
+  import mediumZoom from 'medium-zoom'
+
+  class SiteImageZoom extends HTMLElement {
+    private zoom?: ReturnType<typeof mediumZoom>
+    connectedCallback() {
+      if (this.zoom) return
+      const selector = this.dataset.selector
+      if (!selector) return
+      this.zoom = mediumZoom(selector, { background: this.dataset.background })
+    }
+    disconnectedCallback() {
+      const zoom = this.zoom
+      this.zoom = undefined
+      if (zoom) void zoom.close().then(() => zoom.detach())
+    }
+  }
+  if (!customElements.get('site-image-zoom')) customElements.define('site-image-zoom', SiteImageZoom)
+</script>
+<style is:global>
+  .medium-zoom-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+    will-change: opacity;
+  }
+  .medium-zoom--opened .medium-zoom-overlay {
+    cursor: pointer;
+    cursor: zoom-out;
+    opacity: 1;
+    z-index: 999;
+  }
+  .medium-zoom-image {
+    cursor: pointer;
+    cursor: zoom-in;
+    transition: transform 0.3s cubic-bezier(0.2, 0, 0.2, 1) !important;
+  }
+  .medium-zoom-image--hidden {
+    visibility: hidden;
+  }
+  .medium-zoom-image--opened {
+    position: relative;
+    cursor: pointer;
+    cursor: zoom-out;
+    will-change: transform;
+    z-index: 999;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .medium-zoom-overlay, .medium-zoom-image { transition: none !important; }
+  }
+</style>

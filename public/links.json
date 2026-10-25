@@ -1,0 +1,17 @@
+{
+  "friends": [
+    {
+      "id_name": "friends",
+      "desc": "",
+      "link_list": [
+        {
+          "name": "Cyril Fan",
+          "intro": "软件工程 · 深度学习、多模态大模型与 AI 智能体",
+          "link": "https://cyril-fan.top/",
+          "avatar": "https://cyril-fan.top/avatar/avatar.png",
+          "feed": "https://cyril-fan.top/rss.xml"
+        }
+      ]
+    }
+  ]
+}
